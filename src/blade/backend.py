@@ -229,8 +229,7 @@ class _NinjaFileHeaderGenerator(object):
         self.generate_rule(name='cc',
                            command=template % cc_command,
                            description='CC ${in}',
-                           depfile='${out}.d',
-                           deps='gcc')
+                           depfile='${out}.d')
 
         cxx_command = ('%s -o ${out} -MMD -MF ${out}.d -c -fPIC %s %s ${optimize} '
                        '${cxx_warnings} ${cppflags} %s ${includes} ${in}') % (
@@ -238,8 +237,7 @@ class _NinjaFileHeaderGenerator(object):
         self.generate_rule(name='cxx',
                            command=template % cxx_command,
                            description='CXX ${in}',
-                           depfile='${out}.d',
-                           deps='gcc')
+                           depfile='${out}.d')
 
         self.generate_rule(name='secretcc',
                            command=template % (cc_config['secretcc'] + ' ' + cxx_command),
@@ -255,7 +253,7 @@ class _NinjaFileHeaderGenerator(object):
         """
         self.generate_rule(name='cxxhdrs',
                            command=self._hdrs_command(cxx, cxxflags, cppflags, includes),
-                           depfile='${out}.d', deps='gcc',
+                           depfile='${out}.d',
                            description='CXX HDRS ${in}')
 
     def _hdrs_command(self, cc, flags, cppflags, includes):
@@ -267,13 +265,13 @@ class _NinjaFileHeaderGenerator(object):
         # but errors may occur under certain boundary conditions (for example,
         # `#if __COUNTER__ == __COUNTER__ + 1`),
         # try the command again without it on error.
-        cmd1 = cc + ' -fdirectives-only' + args
+        cmd1 = cc + args
         cmd2 = cc + args
 
         # If the first cpp command fails, the second cpp command will be executed.
         # The error message of the first command should be completely ignored.
         return ('export LC_ALL=C; %s || %s; ec=$$?; %s ${out}.err > ${out}; '
-                'rm -f ${out}.err; exit $$ec') % (cmd1, cmd2, _INCLUSION_STACK_SPLITTER)
+                'rm ${out}.err; exit $$ec') % (cmd1, cmd2, _INCLUSION_STACK_SPLITTER)
 
     def _generate_cc_inclusion_check_rule(self):
         self.generate_rule(name='ccincchk',
