@@ -281,7 +281,7 @@ class _NinjaFileHeaderGenerator(object):
     def _generate_cc_ar_rules(self):
         arflags = ''.join(config.get_item('cc_library_config', 'arflags'))
         self.generate_rule(name='ar',
-                           command='rm -f $out; ar %s $out $in' % arflags,
+                           command='rm $out; ar %s $out $in' % arflags,
                            description='AR ${out}')
 
     def _generate_cc_link_rules(self, ld, linkflags):
@@ -330,7 +330,7 @@ class _NinjaFileHeaderGenerator(object):
         else:
             # Some shell such as Ubuntu's `dash` doesn't support pipefail, make a workaround.
             template = ('export LC_ALL=C; %%s -H 2> ${out}.err; ec=$$?; %s < ${out}.err > %s ; '
-                        'rm -f ${out}.err; exit $$ec') % (
+                        'rm ${out}.err; exit $$ec') % (
                             _INCLUSION_STACK_SPLITTER, inclusion_stack_file)
 
         return template
@@ -442,7 +442,7 @@ class _NinjaFileHeaderGenerator(object):
                 '''))
         jarflags = 'cf' + config.get_item('java_config', 'jar_compression_level')
         self.generate_rule(name='javac',
-                           command='rm -fr ${classes_dir} && mkdir -p ${classes_dir} && '
+                           command='rm -r ${classes_dir} && mkdir -p ${classes_dir} && '
                                    '%s && sleep 0.01 && '
                                    '%s %s ${out} -C ${classes_dir} .' % (
                                        ' '.join(cmd), jar, jarflags),
