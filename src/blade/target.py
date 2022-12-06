@@ -133,6 +133,7 @@ class Target(object):
         current_source_path = self.blade.get_current_source_path()
         self.path = current_source_path
         self.build_dir = self.blade.get_build_dir()
+        self.root_dir = self.blade.get_root_dir()
         self.target_dir = os.path.normpath(os.path.join(self.build_dir, current_source_path))
 
         # The unique key of this target, for internal use mainly.

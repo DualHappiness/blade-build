@@ -125,6 +125,7 @@ class GenRuleTarget(Target):
         cmd = cmd.replace('$SRC_DIR', self.path)
         cmd = cmd.replace('$OUT_DIR', os.path.join(self.build_dir, self.path))
         cmd = cmd.replace('$BUILD_DIR', self.build_dir)
+        cmd = cmd.replace('$ROOT_DIR', self.root_dir)
         locations = self.attr['locations']
         if locations:
             targets = self.blade.get_build_targets()
